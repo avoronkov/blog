@@ -1,0 +1,14 @@
+#!/bin/bash
+set -x
+
+dir="docs/`date +%Y`"
+pref="$dir/`date +%Y-%m-%d`"
+
+n=`ls ${pref}* 2>/dev/null | wc -l`
+
+let n=$(( n + 1 ))
+
+mkdir -p "$dir"
+filename=`printf "${pref}_%02d.note.md" $n`
+touch "$filename"
+vim "$filename"
