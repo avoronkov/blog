@@ -5,3 +5,6 @@ pages:
         - 'note (01)': 2018/2018-04-02_01.note.md
         - 'note (02)': 2018/2018-04-02_02.note.md
         - 'note (03)': 2018/2018-04-02_03.note.md
+    - Extras:
+        - 'Codefest 2018 notes':
+            - 'How to invent (@bobuk)': codefest2018/02.how-to-invent-bobuk.md

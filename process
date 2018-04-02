@@ -5,7 +5,7 @@ use feature qw/say/;
 my $site_name = "Art. Technology. Life";
 my $subtitle = "*Блог Александра Воронкова*";
 
-my @files = `ls docs/*/*.md | sort --reverse`;
+my @files = `ls docs/20*/*.md | sort --reverse`;
 chomp @files;
 
 open my $index, ">", "docs/index.md" or die $!;
@@ -18,10 +18,8 @@ for my $file(@files[0..$max]) {
 	open my $in, "<", $file or die "$!";
 	while (my $line = <$in>) {
 		chomp $line;
-		if ($line eq "" || $line =~ /^[#`_]/) {
-			say $index $line;
-		} else {
-			say $index $line;
+		say $index $line;
+		unless ($line eq "" || $line =~ /^[#`_]/) {
 			my ($link) = $file =~ m{^[^/]+(/.*)\.md$};
 			say $index "[Далее]($link/)\n";
 			last;
@@ -46,3 +44,5 @@ for my $file(reverse @files) {
 }
 
 close $yml;
+
+-s "mkdocs.yml.tail" and qx/cat mkdocs.yml.tail >> mkdocs.yml/;
