@@ -37,10 +37,13 @@ say $yml "pages:";
 say $yml "    - Home: index.md";
 say $yml "    - Blog:";
 
+my $n = 1;
 for my $file(reverse @files) {
-	my ($n, $title) = $file =~ m{/\d{4}-\d{2}-\d{2}_(\d+)\.(.*)\.md$};
+	chomp(my $title = `head -n 1 $file`);
+	($title) = $title =~ /^## (.*)$/;
 	my ($path) = $file =~ m{^docs/(.+)$};
 	say $yml "        - '$title ($n)': $path";
+	$n++;
 }
 
 close $yml;

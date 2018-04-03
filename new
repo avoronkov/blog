@@ -1,14 +1,41 @@
-#!/bin/bash
-set -x
+#!/usr/bin/perl
+use strict;
+use warnings;
+use feature qw/say/;
+use utf8;
 
-dir="docs/`date +%Y`"
-pref="$dir/`date +%Y-%m-%d`"
+use Lingua::Translit;
 
-n=`ls ${pref}* 2>/dev/null | wc -l`
+sub transliterate {
+	my ($str) = @_;
+	my $tr = new Lingua::Translit('GOST 7.79 RUS');
+	return map { my $x = $tr->translit($_); $x =~ s/`//; $x } @_;
+}
 
-let n=$(( n + 1 ))
 
-mkdir -p "$dir"
-filename=`printf "${pref}_%02d.note.md" $n`
-touch "$filename"
-vim "$filename"
+my $dir = "docs/" . `date +%Y`;
+chomp $dir;
+
+my $pref = "$dir/" . `date +%Y-%m-%d`;
+chomp $pref;
+
+my $n = int(`ls $pref* 2>/dev/null | wc -l`);
+$n++;
+
+`mkdir -p $dir`;
+
+$n = sprintf("%02d", $n);
+my $fname = $pref . "_" . $n . "_" . join("_", transliterate(@ARGV)) . ".md";
+
+chomp(my $date = `LC_ALL=ru_RU.UTF-8 date +'%d %b %Y'`);
+
+say "$fname";
+
+say $date;
+
+open my $f, ">", $fname or die $!;
+say $f "## " . join(" ", @ARGV);
+say $f "_($date)_";
+close $f or warn $!;
+
+exec {'vim'} ('vim', $fname);
