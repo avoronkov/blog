@@ -9,7 +9,7 @@ use Lingua::Translit;
 sub transliterate {
 	my ($str) = @_;
 	my $tr = new Lingua::Translit('GOST 7.79 RUS');
-	return map { my $x = $tr->translit($_); $x =~ s/`//; $x } @_;
+	return map { my $x = $tr->translit($_); $x =~ s/[`']//; $x } @_;
 }
 
 
