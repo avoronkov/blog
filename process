@@ -9,16 +9,18 @@ my @files = `ls docs/20*/*.md | sort --reverse`;
 chomp @files;
 
 open my $index, ">", "docs/index.md" or die $!;
-say $index "# $site_name";
+say $index "# $site_name\n";
 say $index $subtitle;
+say $index "## Заметки";
 
 my $max = $#files > 9 ? 9 : $#files;
 
 for my $file(@files[0..$max]) {
 	open my $in, "<", $file or die "$!";
+	print $index "#";
 	while (my $line = <$in>) {
 		chomp $line;
-		say $index $line;
+		say $index "$line";
 		unless ($line eq "" || $line =~ /^[#`_]/) {
 			my ($link) = $file =~ m{^[^/]+(/.*)\.md$};
 			say $index "[Далее]($link/)\n";
@@ -48,4 +50,40 @@ for my $file(reverse @files) {
 
 close $yml;
 
--s "mkdocs.yml.tail" and qx/cat mkdocs.yml.tail >> mkdocs.yml/;
+# -s "mkdocs.yml.tail" and qx/cat mkdocs.yml.tail >> mkdocs.yml/;
+
+sub process_misc {
+	my ($name) = @_;
+	open my $r, "<", "docs/$name.md" or die "$!";
+	chomp(my @lines = <$r>);
+	close $r or warn "$!";
+
+	my ($title) = $lines[0] =~ m/^# (.*)$/;
+
+	open my $y, ">>", "mkdocs.yml" or die "$!";
+	say $y "        - '$title':";
+	say $y "            - '$title': $name.md";
+
+	open my $f, ">", "docs/$name.md" or die "$!";
+	say $f "# $title";
+
+	`echo "- [$title](/$name/)" >> docs/index.md`;
+
+	my @files = sort(glob("docs/$name/*.md"));
+	for my $file(@files) {
+		open my $x, "<", $file or die "$file : $!";
+		my @l = <$x>;
+		close $x or warn "$!";
+		my ($t) = $l[0] =~ m/#\s*(.*)\s*$/;
+		my ($link) = $file =~ m{^.*/([^/]*)\.md$};
+		say $f "- [$t](/$name/$link/)\n";
+
+		say $y "            - '$t': $name/$link.md";
+	}
+	close $f or warn "$!";
+	close $y or warn "$!";
+}
+
+`echo '    - Extras:' >> mkdocs.yml`;
+`echo '## Разное' >> docs/index.md`;
+process_misc "codefest2018";

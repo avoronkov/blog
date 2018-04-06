@@ -10,5 +10,6 @@ pages:
         - 'Парадокс ерунды (6)': 2018/2018-04-05_01_Paradoks_erundy.md
         - 'Инструменты и расходные материалы (7)': 2018/2018-04-06_01_Instrumenty_i_rasxodnye_materialy.md
     - Extras:
-        - 'Codefest 2018 notes':
-            - 'How to invent (@bobuk)': codefest2018/02.how-to-invent-bobuk.md
+        - 'Заметки с Codefest 2018':
+            - 'Заметки с Codefest 2018': codefest2018.md
+            - 'Что делать, чтобы изобретать': codefest2018/02.how-to-invent-bobuk.md
