@@ -3,7 +3,7 @@ use strict;
 use feature qw/say/;
 
 my $site_name = "Art. Technology. Life";
-my $subtitle = "*Блог Александра Воронкова*";
+my $subtitle = "![Cubes](/image/00-white-cube.jpg)\n\n*Блог Александра Воронкова*";
 
 my @files = `ls docs/20*/*.md | sort --reverse`;
 chomp @files;
