@@ -1,0 +1,7 @@
+#!/bin/bash
+
+for i in "$@"; do
+	dir="`dirname "$i"`"
+	name="`basename "$i"`"
+	convert "$i" -resize 800 "$dir/conv_$name"
+done
