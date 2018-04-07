@@ -1,4 +1,5 @@
 site_name: Art. Technology. Life
+theme: cinder
 pages:
     - Home: index.md
     - Blog:
