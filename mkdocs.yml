@@ -1,5 +1,4 @@
 site_name: Art. Technology. Life
-theme: cinder
 pages:
     - Home: index.md
     - Blog:
@@ -10,6 +9,7 @@ pages:
         - 'Двигатель прогресса (5)': 2018/2018-04-03_02_Dvigatel_progressa.md
         - 'Парадокс ерунды (6)': 2018/2018-04-05_01_Paradoks_erundy.md
         - 'Инструменты и расходные материалы (7)': 2018/2018-04-06_01_Instrumenty_i_rasxodnye_materialy.md
+        - 'Инструменты (8)': 2018/2018-04-14_01_Instrumenty.md
     - Extras:
         - 'Заметки с Codefest 2018':
             - 'Заметки с Codefest 2018': codefest2018.md
