@@ -2,6 +2,30 @@
 use strict;
 use feature qw/say/;
 
+use Lingua::Translit;
+
+sub transliterate {
+	my ($str) = @_;
+	my $tr = new Lingua::Translit('GOST 7.79 RUS');
+	return map { my $x = $tr->translit($_); $x =~ s/[`']//; $x } @_;
+}
+
+sub preview_file {
+	my ($file, $out) = @_;
+	open my $in, "<", $file or die "$!";
+	print $out "#";
+	while (my $line = <$in>) {
+		chomp $line;
+		say $out "$line";
+		unless ($line eq "" || $line =~ /^[#`_]/) {
+			my ($link) = $file =~ m{^[^/]+(/.*)\.md$};
+			say $out "[Далее]($link/)\n";
+			last;
+		}
+	}
+	close $in or warn $!;
+}
+
 my $site_name = "Art. Technology. Life";
 my $subtitle = "![Cubes](/image/00-white-cube.jpg)\n\n*Блог Александра Воронкова*";
 
@@ -16,18 +40,7 @@ say $index "## Заметки";
 my $max = $#files > 9 ? 9 : $#files;
 
 for my $file(@files[0..$max]) {
-	open my $in, "<", $file or die "$!";
-	print $index "#";
-	while (my $line = <$in>) {
-		chomp $line;
-		say $index "$line";
-		unless ($line eq "" || $line =~ /^[#`_]/) {
-			my ($link) = $file =~ m{^[^/]+(/.*)\.md$};
-			say $index "[Далее]($link/)\n";
-			last;
-		}
-	}
-	close $in or warn $!;
+	preview_file($file, $index);
 }
 
 close $index;
@@ -49,8 +62,6 @@ for my $file(reverse @files) {
 }
 
 close $yml;
-
-# -s "mkdocs.yml.tail" and qx/cat mkdocs.yml.tail >> mkdocs.yml/;
 
 sub process_misc {
 	my ($name) = @_;
@@ -84,6 +95,28 @@ sub process_misc {
 	close $y or warn "$!";
 }
 
+sub process_tag {
+	my ($tag, $title) = @_;
+	my @files_with_tag = qx/grep -Rn '`#' @files | grep '`#$tag\\b' | cut -d: -f 1/;
+	chomp(@files_with_tag);
+
+	my ($filename) =  transliterate($tag);
+	my $tag_file = "docs/by_tag/" . $filename . ".md";
+	open my $f, ">", $tag_file or die "$! : $tag_file";
+	say $f "# $title";
+	say $f "`#$tag`\n";
+	for my $a(@files_with_tag) {
+		preview_file($a, $f);
+	}
+	close $f;
+
+	my ($short_path) = $tag_file =~ m{^docs/(.*)$};
+	`echo "        - '#$tag': $short_path" >> mkdocs.yml`;
+}
+
 `echo '    - Extras:' >> mkdocs.yml`;
 `echo '## Разное' >> docs/index.md`;
 process_misc "codefest2018";
+
+`echo '    - Tags:' >> mkdocs.yml`;
+process_tag 'книгиокоторыхяупоминалнанабросках', 'Книги, о которых я упоминал на набросках';
