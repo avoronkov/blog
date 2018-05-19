@@ -27,18 +27,22 @@ sub preview_file {
 }
 
 my $site_name = "Art. Technology. Life";
+my $theme = "cinder";
 my $subtitle = "![Cubes](/image/00-white-cube.jpg)\n\n*Блог Александра Воронкова*";
 
 my @files = `ls docs/20*/*.md | sort --reverse`;
 chomp @files;
 
 open my $index, ">", "docs/index.md" or die $!;
-say $index "# $site_name\n";
-say $index $subtitle;
-say $index "## Заметки";
+print $index <<"EOL";
+# $site_name
+
+$subtitle
+
+## Заметки
+EOL
 
 my $max = $#files > 9 ? 9 : $#files;
-
 for my $file(@files[0..$max]) {
 	preview_file($file, $index);
 }
@@ -47,10 +51,13 @@ close $index;
 
 
 open my $yml, ">", "mkdocs.yml" or die $!;
-say $yml "site_name: $site_name";
-say $yml "pages:";
-say $yml "    - Home: index.md";
-say $yml "    - Blog:";
+print $yml <<"EOL";
+site_name: $site_name
+theme: $theme
+pages:
+    - Home: index.md
+    - Blog:
+EOL
 
 my $n = 1;
 for my $file(reverse @files) {
