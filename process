@@ -12,13 +12,24 @@ sub transliterate {
 
 sub preview_file {
 	my ($file, $out) = @_;
+	my ($link) = $file =~ m{^[^/]+(/.*)\.md$};
 	open my $in, "<", $file or die "$!";
 	print $out "#";
+	my $is_title = 1;
 	while (my $line = <$in>) {
 		chomp $line;
+		if ($is_title && $line) {
+			my ($title) = $line =~ m/^##\s*(\S.*)$/;
+			if ($title) {
+				say $out "## [$title]($link)";
+				$is_title = 0;
+			} else {
+				say $out $line;
+			}
+			next;
+		}
 		say $out "$line";
 		unless ($line eq "" || $line =~ /^[#`_]/) {
-			my ($link) = $file =~ m{^[^/]+(/.*)\.md$};
 			say $out "[Далее]($link/)\n";
 			last;
 		}
