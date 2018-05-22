@@ -2,6 +2,8 @@
 use strict;
 use feature qw/say/;
 
+use Set::Scalar;
+
 use Lingua::Translit;
 
 sub transliterate {
@@ -35,6 +37,24 @@ sub preview_file {
 		}
 	}
 	close $in or warn $!;
+}
+
+sub find_all_tags {
+	my (@files) = @_;
+	my @tags;
+	my $tags = Set::Scalar->new;
+	for my $f(@files) {
+		my $content;
+		open my $in, "<", $f or die "$f : $!";
+		{
+			local $/;
+			$content = <$in>;
+		}
+		close $in;
+		my ($tag_str) = $content =~ /`(#[^`]+)`/;
+		$tags->insert(split(/\s+/, $tag_str));
+	}
+	return sort(map {substr($_, 1)} $tags->elements);
 }
 
 my $site_name = "Art. Technology. Life";
@@ -121,8 +141,12 @@ sub process_tag {
 	my ($filename) =  transliterate($tag);
 	my $tag_file = "docs/by_tag/" . $filename . ".md";
 	open my $f, ">", $tag_file or die "$! : $tag_file";
-	say $f "# $title";
-	say $f "`#$tag`\n";
+	if ($title) {
+		say $f "# $title";
+		say $f "`#$tag`\n";
+	} else {
+		say $f "# #$tag\n";
+	}
 	for my $a(@files_with_tag) {
 		preview_file($a, $f);
 	}
@@ -137,4 +161,14 @@ sub process_tag {
 process_misc "codefest2018";
 
 `echo '    - Tags:' >> mkdocs.yml`;
-process_tag 'книгиокоторыхяупоминалнанабросках', 'Книги, о которых я упоминал на набросках';
+my %known_tags = (
+	'книгиокоторыхяупоминалнанабросках' => 'Книги, о которых я упоминал на набросках',
+);
+
+for my $tag(find_all_tags(@files)) {
+	if (exists $known_tags{$tag}) {
+		process_tag $tag, $known_tags{$tag};
+	} else {
+		process_tag $tag;
+	}
+}
