@@ -18,6 +18,7 @@ sub preview_file {
 	open my $in, "<", $file or die "$!";
 	print $out "#";
 	my $is_title = 1;
+	my $is_quote = 0;
 	while (my $line = <$in>) {
 		chomp $line;
 		if ($is_title && $line) {
@@ -30,7 +31,17 @@ sub preview_file {
 			}
 			next;
 		}
+		if ($is_quote) {
+			say $out "$line";
+			if ($line =~ /^```/) {
+				$is_quote = 0;
+			}
+			next;
+		}
 		say $out "$line";
+		if ($line =~ /^```/) {
+			$is_quote = 1;
+		}
 		unless ($line eq "" || $line =~ /^[#`_]/) {
 			say $out "[Далее]($link/)\n";
 			last;
@@ -135,7 +146,7 @@ sub process_misc {
 
 sub process_tag {
 	my ($tag, $title) = @_;
-	my @files_with_tag = qx/grep -Rn '`#' @files | grep '`#$tag\\b' | cut -d: -f 1/;
+	my @files_with_tag = qx/grep -Rn '`#' @files | grep '#$tag\\b' | cut -d: -f 1/;
 	chomp(@files_with_tag);
 
 	my ($filename) =  transliterate($tag);
