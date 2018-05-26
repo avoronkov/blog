@@ -19,6 +19,7 @@ pages:
         - 'Рисуй, чтобы победить (14)': 2018/2018-05-18_03_Risuj,_chtoby_pobedit.md
         - 'What can you really draw in 15 seconds? (15)': 2018/2018-05-19_01_What_can_you_really_draw_in_15_seconds.md
         - 'Непонятное искусство (16)': 2018/2018-05-19_02_Neponyatnoe_iskusstvo.md
+        - 'TEDx Novosibirsk 2018 (17)': 2018/2018-05-27_01_TEDx_Novosibirsk_2018.md
     - Extras:
         - 'Заметки с Codefest 2018':
             - 'Заметки с Codefest 2018': codefest2018.md
@@ -32,6 +33,7 @@ pages:
         - '#music': by_tag/music.md
         - '#punk': by_tag/punk.md
         - '#technology': by_tag/technology.md
+        - '#tedxnovosibirsk': by_tag/tedxnovosibirsk.md
         - '#инструменты': by_tag/instrumenty.md
         - '#книгиокоторыхяупоминалнанабросках': by_tag/knigiokotoryxyaupominalnanabroskax.md
         - '#лень': by_tag/len.md
